@@ -1,8 +1,10 @@
 package JDBC;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.IComentarios;
@@ -18,10 +20,7 @@ public class ComentariosJDBC implements IComentarios{
 	
 	private Connection con;  
 	private Statement comando;
-	
-	
-	
-	
+
 	public ComentariosJDBC(String server, String user, String password, int banco) {
 		this.URL = server;
 		this.NOME = user;
@@ -31,31 +30,127 @@ public class ComentariosJDBC implements IComentarios{
 	
 	@Override
 	public void update(Comentarios comentarios) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+        	StringBuffer buffer = new StringBuffer();
+            buffer.append("UPDATE COMENTARIOS SET ");
+            buffer.append(returnFieldValuesBD(comentarios));
+            buffer.append(" WHERE IDCOMENTARIOS=");
+            buffer.append(comentarios.getIdComentarios());
+            String sql = buffer.toString();
+            
+            System.out.println("SQL para ATUALIZAR que fica no COMENTARIOS : " + sql);
+            
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void insert(Comentarios comentarios) {
-		// TODO Auto-generated method stub
+		try {
+			
+			conectar();
+		
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("INSERT INTO COMENTARIOS (");
+	        buffer.append(this.retornarCamposBD());
+	        buffer.append(") VALUES (");
+	        buffer.append(retornarValoresBD(comentarios));
+	        buffer.append(")");
+	        String sql = buffer.toString();
+
+	        System.out.println("SQL para INSERIR que fica no COMENTARIOS : " + sql);
+
+	        comando.executeUpdate(sql);
+	        fechar();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public Comentarios search(int idComentarios) {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM COMENTARIOS WHERE idComentarios=" + idComentarios; 
+			ResultSet rs = comando.executeQuery(sql);
+			Comentarios comentarios = new Comentarios();
+			if (rs.next()){
+				
+				comentarios.setIdComentarios(rs.getInt("idComentarios"));
+				comentarios.setCliente_idCliente(rs.getInt("cliente_idCliente"));
+				comentarios.setProduto_idProduto(rs.getInt("produto_idProduto"));
+				comentarios.setDescricao(rs.getString("descricao"));
+				comentarios.setPros(rs.getString("pros"));
+				comentarios.setContras(rs.getString("contras"));
+				comentarios.setOpiniaoGeral(rs.getString("opiniaoGeral"));
+				comentarios.setNota(rs.getInt("nota"));
+			}
+			System.out.println(comentarios.getIdComentarios());
+			fechar();
+			return comentarios;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public void remove(Comentarios comentarios) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+    		String sql ="DELETE FROM COMENTARIOS WHERE idComentarios=" + comentarios.getIdComentarios();
+            System.out.println("SQL para REMOVER que fica no COMENTARIOS : "+sql);
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public List<Comentarios> listar() {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM COMENTARIOS"; 
+			ResultSet rs = comando.executeQuery(sql);
+			List<Comentarios> list = new ArrayList<Comentarios>();
+			if (rs.next()){
+				
+				Comentarios comentarios = new Comentarios();
+				
+				comentarios.setIdComentarios(rs.getInt("idComentarios"));
+				comentarios.setCliente_idCliente(rs.getInt("cliente_idCliente"));
+				comentarios.setProduto_idProduto(rs.getInt("produto_idProduto"));
+				comentarios.setDescricao(rs.getString("descricao"));
+				comentarios.setPros(rs.getString("pros"));
+				comentarios.setContras(rs.getString("contras"));
+				comentarios.setOpiniaoGeral(rs.getString("opiniaoGeral"));
+				comentarios.setNota(rs.getInt("nota"));
+				list.add(comentarios);
+			}
+			fechar();
+			return list;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	

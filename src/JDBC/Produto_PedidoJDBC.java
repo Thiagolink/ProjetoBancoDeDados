@@ -1,8 +1,10 @@
 package JDBC;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.IProduto_Pedido;
@@ -18,10 +20,7 @@ public class Produto_PedidoJDBC implements IProduto_Pedido{
 	
 	private Connection con;  
 	private Statement comando;
-	
-	
-	
-	
+
 	public Produto_PedidoJDBC(String server, String user, String password, int banco) {
 		this.URL = server;
 		this.NOME = user;
@@ -31,31 +30,117 @@ public class Produto_PedidoJDBC implements IProduto_Pedido{
 	
 	@Override
 	public void update(Produto_Pedido produto_pedido) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+        	StringBuffer buffer = new StringBuffer();
+            buffer.append("UPDATE PRODUTO_PEDIDO SET ");
+            buffer.append(returnFieldValuesBD(produto_pedido));
+            buffer.append(" WHERE IDPRODUTO_PEDIDO=");
+            buffer.append(produto_pedido.getIdProduto_Pedido());
+            String sql = buffer.toString();
+            
+            System.out.println("SQL para ATUALIZAR que fica no PRODUTO_PEDIDO : " + sql);
+            
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void insert(Produto_Pedido produto_pedido) {
-		// TODO Auto-generated method stub
+		try {
+			
+			conectar();
+		
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("INSERT INTO PRODUTO_PEDIDO (");
+	        buffer.append(this.retornarCamposBD());
+	        buffer.append(") VALUES (");
+	        buffer.append(retornarValoresBD(produto_pedido));
+	        buffer.append(")");
+	        String sql = buffer.toString();
+
+	        System.out.println("SQL para INSERIR que fica no PRODUTO_PEDIDO : " + sql);
+
+	        comando.executeUpdate(sql);
+	        fechar();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
-	public Produto_Pedido search(int produto_pedido) {
-		// TODO Auto-generated method stub
+	public Produto_Pedido search(int idProduto_pedido) {
+		try{
+			conectar();
+			String sql = "SELECT * FROM PRODUTO_PEDIDO WHERE IdProduto_Pedido=" + idProduto_pedido; 
+			ResultSet rs = comando.executeQuery(sql);
+			Produto_Pedido produto_pedido = new Produto_Pedido();
+			if (rs.next()){
+				
+				produto_pedido.setIdProduto_Pedido(rs.getInt("idProduto_pedido"));
+				produto_pedido.setPedido_idPedido(rs.getInt("pedido_IdPedido"));
+				produto_pedido.setProduto_idProduto(rs.getInt("produto_IdProduto"));
+			}
+			System.out.println(produto_pedido.getIdProduto_Pedido());
+			fechar();
+			return produto_pedido;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public void remove(Produto_Pedido produto_pedido) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+    		String sql ="DELETE FROM PRODUTO_PEDIDO WHERE IdProduto_Pedido=" + produto_pedido.getIdProduto_Pedido();
+            System.out.println("SQL para REMOVER que fica no PRODUTO_PEDIDO : "+sql);
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public List<Produto_Pedido> listar() {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM PRODUTO_PEDIDO"; 
+			ResultSet rs = comando.executeQuery(sql);
+			List<Produto_Pedido> list = new ArrayList<Produto_Pedido>();
+			if (rs.next()){
+				
+				Produto_Pedido produto_pedido = new Produto_Pedido();
+				
+				produto_pedido.setIdProduto_Pedido(rs.getInt("idProduto_pedido"));
+				produto_pedido.setPedido_idPedido(rs.getInt("pedido_IdPedido"));
+				produto_pedido.setProduto_idProduto(rs.getInt("produto_IdProduto"));
+				list.add(produto_pedido);
+			}
+			fechar();
+			return list;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

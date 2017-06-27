@@ -1,8 +1,10 @@
 package JDBC;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.IPedido;
@@ -18,10 +20,7 @@ public class PedidoJDBC implements IPedido{
 	
 	private Connection con;  
 	private Statement comando;
-	
-	
-	
-	
+
 	public PedidoJDBC(String server, String user, String password, int banco) {
 		this.URL = server;
 		this.NOME = user;
@@ -31,31 +30,121 @@ public class PedidoJDBC implements IPedido{
 	
 	@Override
 	public void update(Pedido pedido) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+        	StringBuffer buffer = new StringBuffer();
+            buffer.append("UPDATE PEDIDO SET ");
+            buffer.append(returnFieldValuesBD(pedido));
+            buffer.append(" WHERE IDPEDIDO=");
+            buffer.append(pedido.getIdPedido());
+            String sql = buffer.toString();
+            
+            System.out.println("SQL para ATUALIZAR que fica no PEDIDO : " + sql);
+            
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void insert(Pedido pedido) {
-		// TODO Auto-generated method stub
+		try {
+			
+			conectar();
+		
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("INSERT INTO PEDIDO (");
+	        buffer.append(this.retornarCamposBD());
+	        buffer.append(") VALUES (");
+	        buffer.append(retornarValoresBD(pedido));
+	        buffer.append(")");
+	        String sql = buffer.toString();
+
+	        System.out.println("SQL para INSERIR que fica no PEDIDO : " + sql);
+
+	        comando.executeUpdate(sql);
+	        fechar();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public Pedido search(int idPedido) {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM PEDIDO WHERE IdPedido=" + idPedido; 
+			ResultSet rs = comando.executeQuery(sql);
+			Pedido pedido = new Pedido();
+			if (rs.next()){
+				
+				pedido.setIdPedido(rs.getInt("IdPedido"));
+				pedido.setCliente_idCliente(rs.getInt("cliente_IdCliente"));
+				pedido.setPagamento_idPagamento(rs.getInt("pagamento_IdPagamento"));
+				pedido.setValorCompra(rs.getFloat("valorCompra"));
+				pedido.setValorFrete(rs.getFloat("valorFrete"));
+			}
+			System.out.println(pedido.getIdPedido());
+			fechar();
+			return pedido;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public void remove(Pedido pedido) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+    		String sql ="DELETE FROM PEDIDO WHERE IdPedido=" + pedido.getIdPedido();
+            System.out.println("SQL para REMOVER que fica no PEDIDO : "+sql);
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public List<Pedido> listar() {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM PEDIDO"; 
+			ResultSet rs = comando.executeQuery(sql);
+			List<Pedido> list = new ArrayList<Pedido>();
+			if (rs.next()){
+				
+				Pedido pedido = new Pedido();
+				
+				pedido.setIdPedido(rs.getInt("IdPedido"));
+				pedido.setCliente_idCliente(rs.getInt("cliente_IdCliente"));
+				pedido.setPagamento_idPagamento(rs.getInt("pagamento_IdPagamento"));
+				pedido.setValorCompra(rs.getFloat("valorCompra"));
+				pedido.setValorFrete(rs.getFloat("valorFrete"));
+				list.add(pedido);
+			}
+			fechar();
+			return list;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	

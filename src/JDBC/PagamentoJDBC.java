@@ -1,8 +1,10 @@
 package JDBC;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.IPagamento;
@@ -18,10 +20,7 @@ public class PagamentoJDBC implements IPagamento{
 	
 	private Connection con;  
 	private Statement comando;
-	
-	
-	
-	
+
 	public PagamentoJDBC(String server, String user, String password, int banco) {
 		this.URL = server;
 		this.NOME = user;
@@ -31,31 +30,115 @@ public class PagamentoJDBC implements IPagamento{
 	
 	@Override
 	public void update(Pagamento pagamento) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+        	StringBuffer buffer = new StringBuffer();
+            buffer.append("UPDATE PAGAMENTO SET ");
+            buffer.append(returnFieldValuesBD(pagamento));
+            buffer.append(" WHERE IDPAGAMENTO=");
+            buffer.append(pagamento.getIdPagamento());
+            String sql = buffer.toString();
+            
+            System.out.println("SQL para ATUALIZAR que fica no PAGAMENTO : " + sql);
+            
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void insert(Pagamento pagamento) {
-		// TODO Auto-generated method stub
+		try {
+			
+			conectar();
+		
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("INSERT INTO PAGAMENTO (");
+	        buffer.append(this.retornarCamposBD());
+	        buffer.append(") VALUES (");
+	        buffer.append(retornarValoresBD(pagamento));
+	        buffer.append(")");
+	        String sql = buffer.toString();
+
+	        System.out.println("SQL para INSERIR que fica no PAGAMENTO : " + sql);
+
+	        comando.executeUpdate(sql);
+	        fechar();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public Pagamento search(int idPagamento) {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM PAGAMENTO WHERE IdPagamento=" + idPagamento; 
+			ResultSet rs = comando.executeQuery(sql);
+			Pagamento pagamento = new Pagamento();
+			if (rs.next()){
+				
+				pagamento.setIdPagamento(rs.getInt("IdPagamento"));
+				pagamento.setValorTotal(rs.getFloat("valorTotal"));
+			}
+			System.out.println(pagamento.getIdPagamento());
+			fechar();
+			return pagamento;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public void remove(Pagamento pagamento) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+    		String sql ="DELETE FROM PAGAMENTO WHERE IdPagamento=" + pagamento.getIdPagamento();
+            System.out.println("SQL para REMOVER que fica no PAGAMENTO : "+sql);
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public List<Pagamento> listar() {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM PAGAMENTO"; 
+			ResultSet rs = comando.executeQuery(sql);
+			List<Pagamento> list = new ArrayList<Pagamento>();
+			if (rs.next()){
+				
+				Pagamento pagamento = new Pagamento();
+				
+				pagamento.setIdPagamento(rs.getInt("IdPagamento"));
+				pagamento.setValorTotal(rs.getFloat("valorTotal"));
+				list.add(pagamento);
+			}
+			fechar();
+			return list;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

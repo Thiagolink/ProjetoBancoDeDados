@@ -7,7 +7,7 @@ import entidade.Notificacao;
 public interface INotificacao {
 	public void update(Notificacao notificacao);
 	public void insert(Notificacao notificacao);
-	public Notificacao search(int notificacao);
+	public Notificacao search(int idNotificacao);
 	public void remove(Notificacao notificacao);
 	public List<Notificacao> listar();
 }

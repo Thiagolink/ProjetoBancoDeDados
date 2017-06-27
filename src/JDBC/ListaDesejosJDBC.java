@@ -1,8 +1,10 @@
 package JDBC;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.IListaDesejos;
@@ -18,10 +20,7 @@ public class ListaDesejosJDBC implements IListaDesejos{
 	
 	private Connection con;  
 	private Statement comando;
-	
-	
-	
-	
+
 	public ListaDesejosJDBC(String server, String user, String password, int banco) {
 		this.URL = server;
 		this.NOME = user;
@@ -31,31 +30,113 @@ public class ListaDesejosJDBC implements IListaDesejos{
 	
 	@Override
 	public void update(ListaDesejos listaDesejos) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+        	StringBuffer buffer = new StringBuffer();
+            buffer.append("UPDATE LISTADESEJO SET ");
+            buffer.append(returnFieldValuesBD(listaDesejos));
+            buffer.append(" WHERE IDLISTADESEJOS=");
+            buffer.append(listaDesejos.getIdListaDesejos());
+            String sql = buffer.toString();
+            
+            System.out.println("SQL para ATUALIZAR que fica no LISTADESEJOS : " + sql);
+            
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void insert(ListaDesejos listaDesejos) {
-		// TODO Auto-generated method stub
+		try {
+			
+			conectar();
+		
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("INSERT INTO LISTADESEJOS (");
+	        buffer.append(this.retornarCamposBD());
+	        buffer.append(") VALUES (");
+	        buffer.append(retornarValoresBD(listaDesejos));
+	        buffer.append(")");
+	        String sql = buffer.toString();
+
+	        System.out.println("SQL para INSERIR que fica no LISTADESEJOS : " + sql);
+
+	        comando.executeUpdate(sql);
+	        fechar();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public ListaDesejos search(int idListaDesejos) {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM LISTADESEJOS WHERE IdListaDesejos=" + idListaDesejos; 
+			ResultSet rs = comando.executeQuery(sql);
+			ListaDesejos listaDesejos = new ListaDesejos();
+			if (rs.next()){
+				
+				listaDesejos.setIdListaDesejos(rs.getInt("IdListaDesejos"));
+			}
+			System.out.println(listaDesejos.getIdListaDesejos());
+			fechar();
+			return listaDesejos;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public void remove(ListaDesejos listaDesejos) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+    		String sql ="DELETE FROM LISTADESEJOS WHERE IdListaDesejos=" + listaDesejos.getIdListaDesejos();
+            System.out.println("SQL para REMOVER que fica no LISTADESEJOS : "+sql);
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public List<ListaDesejos> listar() {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM LISTADESEJOS"; 
+			ResultSet rs = comando.executeQuery(sql);
+			List<ListaDesejos> list = new ArrayList<ListaDesejos>();
+			if (rs.next()){
+				
+				ListaDesejos listaDesejos = new ListaDesejos();
+				
+				listaDesejos.setIdListaDesejos(rs.getInt("IdListaDesejos"));
+				list.add(listaDesejos);
+			}
+			fechar();
+			return list;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

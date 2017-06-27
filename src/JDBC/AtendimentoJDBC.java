@@ -1,8 +1,10 @@
 package JDBC;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.IAtendimento;
@@ -17,10 +19,7 @@ public class AtendimentoJDBC implements IAtendimento{
 	private int BANCO;
 	
 	private Connection con;  
-	private Statement comando;
-	
-	
-	
+	private Statement comando;	
 	
 	public AtendimentoJDBC(String server, String user, String password, int banco) {
 		this.URL = server;
@@ -29,34 +28,123 @@ public class AtendimentoJDBC implements IAtendimento{
 		this.BANCO = banco;
 	}
 	
-	
 	@Override
 	public void update(Atendimento atendimento) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+        	StringBuffer buffer = new StringBuffer();
+            buffer.append("UPDATE ATENDIMENTO SET ");
+            buffer.append(returnFieldValuesBD(atendimento));
+            buffer.append(" WHERE IDATENDIMENTO=");
+            buffer.append(atendimento.getIdAtendimento());
+            String sql = buffer.toString();
+            
+            System.out.println("SQL para ATUALIZAR que fica no ATENDIMENTO : " + sql);
+            
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void insert(Atendimento atendimento) {
-		// TODO Auto-generated method stub
+		try {
+			
+			conectar();
+		
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("INSERT INTO ATENDIMENTO (");
+	        buffer.append(this.retornarCamposBD());
+	        buffer.append(") VALUES (");
+	        buffer.append(retornarValoresBD(atendimento));
+	        buffer.append(")");
+	        String sql = buffer.toString();
+
+	        System.out.println("SQL para INSERIR que fica no ATENDIMENTO : " + sql);
+
+	        comando.executeUpdate(sql);
+	        fechar();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public Atendimento search(int idAtendimento) {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM ATENDIMENTO WHERE idAtendimento=" + idAtendimento; 
+			ResultSet rs = comando.executeQuery(sql);
+			Atendimento atendimento = new Atendimento();
+			if (rs.next()){
+				
+				atendimento.setIdAtendimento(rs.getInt("idAtendimento"));
+				atendimento.setReclamacao_idReclamacao(rs.getInt("reclamacao_idReclamacao"));
+				atendimento.setVendedor_idVendedor(rs.getInt("vendedor_idVendedor"));
+				atendimento.setDataAtendimento(rs.getDate("dataAtendimento"));
+				atendimento.setDescricaoAtendimento(rs.getString("descricaoAtendimento"));
+			}
+			System.out.println(atendimento.getIdAtendimento());
+			fechar();
+			return atendimento;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public void remove(Atendimento atendimento) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+    		String sql ="DELETE FROM ATENDIMENTO WHERE idAtendimento=" + atendimento.getIdAtendimento();
+            System.out.println("SQL para REMOVER que fica no ATENDIMENTO : "+sql);
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public List<Atendimento> listar() {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM ATENDIMENTO"; 
+			ResultSet rs = comando.executeQuery(sql);
+			List<Atendimento> list = new ArrayList<Atendimento>();
+			if (rs.next()){
+				
+				Atendimento atendimento = new Atendimento();
+				
+				atendimento.setIdAtendimento(rs.getInt("idAtendimento"));
+				atendimento.setReclamacao_idReclamacao(rs.getInt("reclamacao_idReclamacao"));
+				atendimento.setVendedor_idVendedor(rs.getInt("vendedor_idVendedor"));
+				atendimento.setDataAtendimento(rs.getDate("dataAtendimento"));
+				atendimento.setDescricaoAtendimento(rs.getString("descricaoAtendimento"));
+				list.add(atendimento);
+			}
+			fechar();
+			return list;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

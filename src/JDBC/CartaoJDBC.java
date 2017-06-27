@@ -1,8 +1,10 @@
 package JDBC;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.ICartao;
@@ -19,9 +21,6 @@ public class CartaoJDBC implements ICartao{
 	private Connection con;  
 	private Statement comando;
 	
-	
-	
-	
 	public CartaoJDBC(String server, String user, String password, int banco) {
 		this.URL = server;
 		this.NOME = user;
@@ -31,31 +30,125 @@ public class CartaoJDBC implements ICartao{
 	
 	@Override
 	public void update(Cartao cartao) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+        	StringBuffer buffer = new StringBuffer();
+            buffer.append("UPDATE CARTAO SET ");
+            buffer.append(returnFieldValuesBD(cartao));
+            buffer.append(" WHERE IDCARTAO=");
+            buffer.append(cartao.getIdCartao());
+            String sql = buffer.toString();
+            
+            System.out.println("SQL para ATUALIZAR que fica no CARTAO : " + sql);
+            
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void insert(Cartao cartao) {
-		// TODO Auto-generated method stub
+		try {
+			
+			conectar();
+		
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("INSERT INTO CARTAO (");
+	        buffer.append(this.retornarCamposBD());
+	        buffer.append(") VALUES (");
+	        buffer.append(retornarValoresBD(cartao));
+	        buffer.append(")");
+	        String sql = buffer.toString();
+
+	        System.out.println("SQL para INSERIR que fica no CARTAO : " + sql);
+
+	        comando.executeUpdate(sql);
+	        fechar();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public Cartao search(int idCartao) {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM CARTAO WHERE idCartao=" + idCartao; 
+			ResultSet rs = comando.executeQuery(sql);
+			Cartao cartao = new Cartao();
+			if (rs.next()){
+				
+				cartao.setIdCartao(rs.getInt("idCartao"));
+				cartao.setPagamento_idPagamento(rs.getInt("pagamento_idPagamento"));
+				cartao.setNome(rs.getString("nome"));
+				cartao.setCodigoSeguranca(rs.getInt("codigoSeguranca"));
+				cartao.setNumeroCartao(rs.getInt("numeroCartao"));
+				cartao.setDataVencimentoCartao(rs.getDate("dataVencimentoCartao"));
+				cartao.setBandeira(rs.getString("bandeira"));
+			}
+			System.out.println(cartao.getIdCartao());
+			fechar();
+			return cartao;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public void remove(Cartao cartao) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+    		String sql ="DELETE FROM CARTAO WHERE idCartao=" + cartao.getIdCartao();
+            System.out.println("SQL para REMOVER que fica no Cartao : "+sql);
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public List<Cartao> listar() {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM CARTAO"; 
+			ResultSet rs = comando.executeQuery(sql);
+			List<Cartao> list = new ArrayList<Cartao>();
+			if (rs.next()){
+				
+				Cartao cartao = new Cartao();
+				
+				cartao.setIdCartao(rs.getInt("idCartao"));
+				cartao.setPagamento_idPagamento(rs.getInt("pagamento_idPagamento"));
+				cartao.setNome(rs.getString("nome"));
+				cartao.setCodigoSeguranca(rs.getInt("codigoSeguranca"));
+				cartao.setNumeroCartao(rs.getInt("numeroCartao"));
+				cartao.setDataVencimentoCartao(rs.getDate("dataVencimentoCartao"));
+				cartao.setBandeira(rs.getString("bandeira"));
+				list.add(cartao);
+			}
+			fechar();
+			return list;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	

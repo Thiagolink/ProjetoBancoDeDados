@@ -1,8 +1,10 @@
 package JDBC;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.IReclamacao;
@@ -18,10 +20,7 @@ public class ReclamacaoJDBC implements IReclamacao{
 	
 	private Connection con;  
 	private Statement comando;
-	
-	
-	
-	
+
 	public ReclamacaoJDBC(String server, String user, String password, int banco) {
 		this.URL = server;
 		this.NOME = user;
@@ -31,31 +30,119 @@ public class ReclamacaoJDBC implements IReclamacao{
 	
 	@Override
 	public void update(Reclamacao reclamacao) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+        	StringBuffer buffer = new StringBuffer();
+            buffer.append("UPDATE RECLAMACAO SET ");
+            buffer.append(returnFieldValuesBD(reclamacao));
+            buffer.append(" WHERE IDRECLAMACAO=");
+            buffer.append(reclamacao.getIdReclamacao());
+            String sql = buffer.toString();
+            
+            System.out.println("SQL para ATUALIZAR que fica no RECLAMACAO : " + sql);
+            
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void insert(Reclamacao reclamacao) {
-		// TODO Auto-generated method stub
+		try {
+			
+			conectar();
+		
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("INSERT INTO RECLAMACAO (");
+	        buffer.append(this.retornarCamposBD());
+	        buffer.append(") VALUES (");
+	        buffer.append(retornarValoresBD(reclamacao));
+	        buffer.append(")");
+	        String sql = buffer.toString();
+
+	        System.out.println("SQL para INSERIR que fica no RECLAMACAO : " + sql);
+
+	        comando.executeUpdate(sql);
+	        fechar();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public Reclamacao search(int idReclamacao) {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM RECLAMACAO WHERE IdReclamacao=" + idReclamacao; 
+			ResultSet rs = comando.executeQuery(sql);
+			Reclamacao reclamacao = new Reclamacao();
+			if (rs.next()){
+				
+				reclamacao.setIdReclamacao(rs.getInt("IdReclamacao"));
+				reclamacao.setCliente_idCliente(rs.getInt("cliente_IdCliente"));
+				reclamacao.setDescricaoReclamacao(rs.getString("descricaoReclamacao"));
+				reclamacao.setTipo(rs.getString("tipo"));
+			}
+			System.out.println(reclamacao.getIdReclamacao());
+			fechar();
+			return reclamacao;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public void remove(Reclamacao reclamacao) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+    		String sql ="DELETE FROM RECLAMACAO WHERE IdReclamacao=" + reclamacao.getIdReclamacao();
+            System.out.println("SQL para REMOVER que fica no RECLAMACAO : "+sql);
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public List<Reclamacao> listar() {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM RECLAMACAO"; 
+			ResultSet rs = comando.executeQuery(sql);
+			List<Reclamacao> list = new ArrayList<Reclamacao>();
+			if (rs.next()){
+				
+				Reclamacao reclamacao = new Reclamacao();
+				
+				reclamacao.setIdReclamacao(rs.getInt("IdReclamacao"));
+				reclamacao.setCliente_idCliente(rs.getInt("cliente_IdCliente"));
+				reclamacao.setDescricaoReclamacao(rs.getString("descricaoReclamacao"));
+				reclamacao.setTipo(rs.getString("tipo"));
+				list.add(reclamacao);
+			}
+			fechar();
+			return list;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	

@@ -1,8 +1,10 @@
 package JDBC;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 import DAO.IFornecedor;
@@ -18,10 +20,7 @@ public class FornecedorJDBC implements IFornecedor{
 	
 	private Connection con;  
 	private Statement comando;
-	
-	
-	
-	
+
 	public FornecedorJDBC(String server, String user, String password, int banco) {
 		this.URL = server;
 		this.NOME = user;
@@ -31,31 +30,119 @@ public class FornecedorJDBC implements IFornecedor{
 	
 	@Override
 	public void update(Fornecedor fornecedor) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+        	StringBuffer buffer = new StringBuffer();
+            buffer.append("UPDATE FORNECEDOR SET ");
+            buffer.append(returnFieldValuesBD(fornecedor));
+            buffer.append(" WHERE IDFORNECEDOR=");
+            buffer.append(fornecedor.getIdFornecedor());
+            String sql = buffer.toString();
+            
+            System.out.println("SQL para ATUALIZAR que fica no FORNECEDOR : " + sql);
+            
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void insert(Fornecedor fornecedor) {
-		// TODO Auto-generated method stub
+		try {
+			
+			conectar();
+		
+	        StringBuffer buffer = new StringBuffer();
+	        buffer.append("INSERT INTO FORNECEDOR (");
+	        buffer.append(this.retornarCamposBD());
+	        buffer.append(") VALUES (");
+	        buffer.append(retornarValoresBD(fornecedor));
+	        buffer.append(")");
+	        String sql = buffer.toString();
+
+	        System.out.println("SQL para INSERIR que fica no FORNECEDOR : " + sql);
+
+	        comando.executeUpdate(sql);
+	        fechar();
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public Fornecedor search(int idFornecedor) {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM FORNECEDOR WHERE IdFornecedor=" + idFornecedor; 
+			ResultSet rs = comando.executeQuery(sql);
+			Fornecedor fornecedor = new Fornecedor();
+			if (rs.next()){
+				
+				fornecedor.setIdFornecedor(rs.getInt("IdFornecedor"));
+				fornecedor.setPessoa_idPessoa(rs.getInt("pessoa_IdPessoa"));
+				fornecedor.setNome(rs.getString("nome"));
+				fornecedor.setCNPJ(rs.getInt("CNPJ"));
+			}
+			System.out.println(fornecedor.getIdFornecedor());
+			fechar();
+			return fornecedor;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public void remove(Fornecedor fornecedor) {
-		// TODO Auto-generated method stub
+		try {
+        	conectar();
+    		String sql ="DELETE FROM FORNECEDOR WHERE IdFornecedor=" + fornecedor.getIdFornecedor();
+            System.out.println("SQL para REMOVER que fica no FORNECEDOR : "+sql);
+			comando.executeUpdate(sql);
+			fechar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public List<Fornecedor> listar() {
-		// TODO Auto-generated method stub
+		try{
+			conectar();
+			String sql = "SELECT * FROM FORNECEDOR"; 
+			ResultSet rs = comando.executeQuery(sql);
+			List<Fornecedor> list = new ArrayList<Fornecedor>();
+			if (rs.next()){
+				
+				Fornecedor fornecedor = new Fornecedor();
+				
+				fornecedor.setIdFornecedor(rs.getInt("IdFornecedor"));
+				fornecedor.setPessoa_idPessoa(rs.getInt("pessoa_IdPessoa"));
+				fornecedor.setNome(rs.getString("nome"));
+				fornecedor.setCNPJ(rs.getInt("CNPJ"));
+				list.add(fornecedor);
+			}
+			fechar();
+			return list;
+		} catch(SQLException e){
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

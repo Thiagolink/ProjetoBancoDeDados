@@ -90,7 +90,7 @@ public class AdministradorJDBC implements IAdministrador{
 				
 				administrador.setIdAdmistrador(rs.getInt("IdAdministrador"));
 				administrador.setUsuario_idUsuario(rs.getInt("usuario_idUsuario"));
-				administrador.setSalario(rs.getInt("salario"));
+				administrador.setSalario(rs.getFloat("salario"));
 			}
 			System.out.println(administrador.getIdAdmistrador());
 			fechar();
@@ -132,7 +132,7 @@ public class AdministradorJDBC implements IAdministrador{
 				
 				administrador.setIdAdmistrador(rs.getInt("IdAdministrador"));
 				administrador.setUsuario_idUsuario(rs.getInt("usuario_idUsuario"));
-				administrador.setSalario(rs.getInt("salario"));
+				administrador.setSalario(rs.getFloat("salario"));
 				list.add(administrador);
 			}
 			fechar();

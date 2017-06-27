@@ -158,7 +158,7 @@ public class DepartamentosJDBC implements IDepartamentos{
 	}
 
 	protected String retornarCamposBD() {
-    	return "idDepartamntos, nome";
+    	return "idDepartamentos, nome";
     }
     
     protected String returnFieldValuesBD(Departamentos departamentos) {

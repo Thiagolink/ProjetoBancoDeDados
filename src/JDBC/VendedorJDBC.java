@@ -9,7 +9,6 @@ import java.util.List;
 
 import DAO.IVendedor;
 import conexao.ConFactory;
-import entidade.Administrador;
 import entidade.Vendedor;
 
 public class VendedorJDBC implements IVendedor{
@@ -90,7 +89,7 @@ public class VendedorJDBC implements IVendedor{
 				
 				vendedor.setIdVendedor(rs.getInt("IdVendedor"));
 				vendedor.setUsuario_idUsuario(rs.getInt("Usuario_IdUsuario"));
-				vendedor.setSalario(rs.getInt("salario"));
+				vendedor.setSalario(rs.getFloat("salario"));
 			}
 			System.out.println(vendedor.getIdVendedor());
 			fechar();
@@ -132,7 +131,7 @@ public class VendedorJDBC implements IVendedor{
 				
 				vendedor.setIdVendedor(rs.getInt("IdVendedor"));
 				vendedor.setUsuario_idUsuario(rs.getInt("Usuario_IdUsuario"));
-				vendedor.setSalario(rs.getInt("salario"));
+				vendedor.setSalario(rs.getFloat("salario"));
 				list.add(vendedor);
 			}
 			fechar();

@@ -4,7 +4,7 @@ public class Administrador {
 	
 	private int idAdmistrador;
 	private int usuario_idUsuario;
-	private int salario;
+	private float salario;
 	
 	
 	public Administrador() {
@@ -41,12 +41,12 @@ public class Administrador {
 	}
 
 
-	public int getSalario() {
+	public float getSalario() {
 		return salario;
 	}
 
 
-	public void setSalario(int salario) {
+	public void setSalario(float salario) {
 		this.salario = salario;
 	}
 	

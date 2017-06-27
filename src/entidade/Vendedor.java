@@ -4,9 +4,19 @@ public class Vendedor {
 
 	private int idVendedor;
 	private int usuario_idUsuario;
-	private int salario;
+	private float salario;
 	
 	
+	public float getSalario() {
+		return salario;
+	}
+
+
+	public void setSalario(float salario) {
+		this.salario = salario;
+	}
+
+
 	public Vendedor() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -38,16 +48,6 @@ public class Vendedor {
 
 	public void setUsuario_idUsuario(int usuario_idUsuario) {
 		this.usuario_idUsuario = usuario_idUsuario;
-	}
-
-
-	public int getSalario() {
-		return salario;
-	}
-
-
-	public void setSalario(int salario) {
-		this.salario = salario;
 	}
 	
 	

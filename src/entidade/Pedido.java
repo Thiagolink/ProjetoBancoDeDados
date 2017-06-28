@@ -8,12 +8,10 @@ public class Pedido {
 	private float valorCompra;
 	private float valorFrete;
 	
-	
 	public Pedido() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
 
 	public Pedido(int idPedido, int cliente_idCliente, int pagamento_idPagamento, float valorCompra, float valorFrete) {
 		super();

@@ -12,12 +12,10 @@ public class Produto {
 	private String tamanho;
 	private int estoque;
 	
-	
 	public Produto() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
 
 	public Produto(int idProduto, int promocoes_idPromocoes, int departamentos_idDepartamentos,
 			int fornecedor_idFornecedor, String nome, String descricao, float preco, String marca, String tamanho,

@@ -14,10 +14,11 @@ public class Main {
 		SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");  
 		java.sql.Date data = new java.sql.Date(format.parse("2012-09-13").getTime());
 		
-		Departamentos teste = new Departamentos(2, "asd");
+		Departamentos teste = new Departamentos("aaaaaaa");
 		IDepartamentos depDAO = new DepartamentosJDBC("jdbc:mysql://localhost/new_schema","root","102004",ConFactory.MYSQL);
 
 		depDAO.insert(teste);
+		depDAO.search(2);
 	}
 
 }

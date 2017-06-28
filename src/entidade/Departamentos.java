@@ -10,9 +10,8 @@ public class Departamentos {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Departamentos(int idDepartamntos, String nome) {
+	public Departamentos(String nome) {
 		super();
-		this.idDepartamntos = idDepartamntos;
 		this.nome = nome;
 	}
 

@@ -158,14 +158,12 @@ public class DepartamentosJDBC implements IDepartamentos{
 	}
 
 	protected String retornarCamposBD() {
-    	return "idDepartamentos, nome";
+    	return "nome";
     }
     
     protected String returnFieldValuesBD(Departamentos departamentos) {
 
         StringBuffer buffer = new StringBuffer();
-        buffer.append("idDepartamntos=");
-        buffer.append(departamentos.getIdDepartamntos());
         buffer.append(", nome=");
         buffer.append(retornarValorStringBD(departamentos.getNome()));
 
@@ -174,9 +172,7 @@ public class DepartamentosJDBC implements IDepartamentos{
     
     protected String retornarValoresBD(Departamentos departamentos) {
     	return
-    			departamentos.getIdDepartamntos()
-	        + ", "
-	        + retornarValorStringBD(departamentos.getNome());
+    			retornarValorStringBD(departamentos.getNome());
     }
     
     private String retornarValorStringBD(String valor) {

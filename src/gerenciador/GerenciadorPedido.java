@@ -14,13 +14,13 @@ import entidade.Produto_Pedido;
 public class GerenciadorPedido {
 	
 	private IPedido daoPedido;
-	private GerenciadorProduto_Pedido produto_pedido;
-	private GerenciadorProduto produto;
+	private GerenciadorProduto_Pedido gerenciadorProduto_Pedido;
+	private GerenciadorProduto gerenciadorProduto;
 	
 	public GerenciadorPedido() {
 		this.daoPedido = new PedidoJDBC("jdbc:mysql://localhost/new_schema","root","102004",ConFactory.MYSQL);
-		this.produto_pedido = new GerenciadorProduto_Pedido();
-		this.produto = new GerenciadorProduto();
+		this.gerenciadorProduto_Pedido = new GerenciadorProduto_Pedido();
+		this.gerenciadorProduto = new GerenciadorProduto();
 	}
 	
 	public void cadastrarPedido(Pedido pedido){
@@ -47,7 +47,7 @@ public class GerenciadorPedido {
     	List<Integer> listIds = new ArrayList<Integer>();
     	List<Produto_Pedido> listProduto_Pedido = new ArrayList<Produto_Pedido>();
     	Produto produto = new Produto();
-    	listProduto_Pedido = this.produto_pedido.listarProduto_Pedido();
+    	listProduto_Pedido = this.gerenciadorProduto_Pedido.listarProduto_Pedido();
     	
 		for(int i = 0; i < listProduto_Pedido.size(); i++){
 			if(pedido.getIdPedido() == listProduto_Pedido.get(i).getPedido_idPedido()){
@@ -56,7 +56,7 @@ public class GerenciadorPedido {
 		}
 		
 		for(int i = 0; i < listIds.size(); i++){
-			produto = this.produto.getProduto(listIds.get(i));
+			produto = this.gerenciadorProduto.getProduto(listIds.get(i));
 			pedido.setValorCompra(pedido.getValorCompra() + produto.getPreco());
 		}
     }

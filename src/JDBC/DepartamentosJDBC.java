@@ -158,12 +158,14 @@ public class DepartamentosJDBC implements IDepartamentos{
 	}
 
 	protected String retornarCamposBD() {
-    	return "nome";
+    	return "IdDepartamentos, nome";
     }
     
     protected String returnFieldValuesBD(Departamentos departamentos) {
 
         StringBuffer buffer = new StringBuffer();
+        buffer.append("idDepartamentos=");
+        buffer.append(departamentos.getIdDepartamntos());
         buffer.append(", nome=");
         buffer.append(retornarValorStringBD(departamentos.getNome()));
 
